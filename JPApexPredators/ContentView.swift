@@ -12,8 +12,10 @@ struct ContentView: View {
     
     @State var searchedText = ""
     @State var alphabetical = false
+    @State var currentFilter = PredatorType.all
 
     var filteredPredators: [ApexPredator] {
+        predators.filter(by: currentFilter)
         predators.sort(by: alphabetical)
         return predators.search(for: searchedText)
     }
@@ -61,6 +63,18 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: alphabetical ? "film" : "textformat")
                             .symbolEffect(.bounce, value: alphabetical)
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("Filter", selection: $currentFilter) {
+                            ForEach(PredatorType.allCases) { type in
+                                Label(type.rawValue.capitalized, systemImage: type.icon)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
                     }
                 }
             }
