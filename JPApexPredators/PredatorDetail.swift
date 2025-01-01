@@ -10,7 +10,10 @@ import MapKit
 
 struct PredatorDetail: View {
     let predator: ApexPredator
+    
     @State var position: MapCameraPosition
+    
+    @Namespace var namespace
     
     var body: some View {
         GeometryReader { proxy in
@@ -43,7 +46,17 @@ struct PredatorDetail: View {
                         .font(.largeTitle)
                     
                     NavigationLink {
-                        PredatorMap(postion: .camera(MapCamera(centerCoordinate: predator.location, distance: 1000, heading: 600, pitch: 80)))
+                        PredatorMap(
+                            postion: .camera(
+                                MapCamera(
+                                    centerCoordinate: predator.location,
+                                    distance: 1000,
+                                    heading: 600,
+                                    pitch: 80
+                                )
+                            )
+                        )
+                        .navigationTransition(.zoom(sourceID: 1, in: namespace))
                     } label: {
                         Map(position: $position) {
                             Annotation(predator.name, coordinate: predator.location) {
@@ -70,6 +83,7 @@ struct PredatorDetail: View {
                         }
                         .clipShape(.rect(cornerRadius: 15))
                     }
+                    .matchedTransitionSource(id: 1, in: namespace)
                     
                     Text("Appears in:")
                         .font(.title3)
